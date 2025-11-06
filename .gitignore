@@ -1,0 +1,40 @@
+###########################################
+# Visual Studio / Visual Studio Code - User Specific
+###########################################
+.vs/
+.vscode/
+
+###########################################
+# General Build/Binaries
+###########################################
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.pdb
+*.suo
+
+###########################################
+# Dependency/Package Files
+###########################################
+packages
+node_modules
+bower_components
+
+###########################################
+# Sensitive/Local Configuration
+###########################################
+# Hassas bilgileri iceren yerel ayarlar:
+appsettings.Development.json
+# Eğer varsa appsettings.Secret.json gibi dosyalar
+# *.bak
+# *.log
+
+###########################################
+# Entity Framework Core Migrations
+###########################################
+# DB dosyalari (SQLite icin)
+*.db
+*.sqlite
+*.sqlite-journal
