@@ -62,28 +62,33 @@ namespace backend.Controllers
 
         
         [HttpPost("tasks")]
-        public async Task<IActionResult> AddTask([FromBody] TaskCreateDto request)
-        {
-            var currentUserId = GetCurrentUserId();
+public async Task<IActionResult> AddTask([FromBody] TaskCreateDto request)
+{
+    var currentUserId = GetCurrentUserId();
 
-            var newTask = new MyTask
-            {
-                Title = request.Title,
-                Description = request.Description,
-                Category = request.Category, 
-                Status = "Pending", 
-                DueDate = request.DueDate,
-                DueTime = request.DueTime,
-                CreatedAt = DateTime.Now,
-                UserId = currentUserId 
-            };
+    // DueTime string'i TimeSpan'e çevirme
+    if (!TimeSpan.TryParse(request.DueTime, out TimeSpan dueTime))
+    {
+        return BadRequest("Geçersiz saat formatı. Lütfen HH:mm formatında giriniz.");
+    }
 
-            _context.MyTasks.Add(newTask);
-            await _context.SaveChangesAsync();
+    var newTask = new MyTask
+    {
+        Title = request.Title,
+        Description = request.Description,
+        Category = request.Category, 
+        Status = "todo", 
+        DueDate = request.DueDate,
+        DueTime = dueTime, // Çevrilen TimeSpan değerini kullan
+        CreatedAt = DateTime.Now,
+        UserId = currentUserId 
+    };
 
-            
-            return CreatedAtAction(nameof(TaskList), new { id = newTask.Id }, newTask);
-        }
+    _context.MyTasks.Add(newTask);
+    await _context.SaveChangesAsync();
+
+    return CreatedAtAction(nameof(TaskList), new { id = newTask.Id }, newTask);
+}
 
         
         [HttpPut("tasks/{id}")]

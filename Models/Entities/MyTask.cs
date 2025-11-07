@@ -11,15 +11,15 @@ namespace backend.Models.Entities
         public string Title { get; set; } = "";
         public string Description { get; set; } = "";
         public string Category { get; set; } = "";
-        public string Status { get; set; } = "";
-
+        public string Status { get; set; } = "todo";  // Default value
         public DateTime DueDate { get; set; }
         public TimeSpan DueTime { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? LastModified { get; set; }
-
-
         public int UserId { get; set; }
+        
+        // Navigation property (opsiyonel ama önerilen)
+        public User? User { get; set; }
 
     }
 }

@@ -34,12 +34,13 @@ namespace backend.Controllers
             }
 
             
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            CreatePasswordHash(request.Password, out string passwordHash, out string passwordSalt);
 
             var user = new User
             {
                 Username = request.Username,
                 FullName = request.FullName,
+                   Email = request.Email,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 
@@ -80,31 +81,26 @@ namespace backend.Controllers
         
 
         
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-             
-            using (var hmac = new HMACSHA512())
-            {
-                // Salt (Tuz) olarak kullanılan rastgele anahtar
-                passwordSalt = hmac.Key; 
-                
-                // Parolayı ve Salt'ı kullanarak hash'i hesapla
-                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)); 
-            }
-        }
+        private void CreatePasswordHash(string password, out string passwordHash, out string passwordSalt)
+{
+    using (var hmac = new HMACSHA512())
+    {
+        passwordSalt = Convert.ToBase64String(hmac.Key);
+        passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(password))); 
+    }
+}
 
         
-        private bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-        {
-           
-            using (var hmac = new HMACSHA512(storedSalt))
-            {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                
-                
-                return computedHash.SequenceEqual(storedHash); 
-            }
-        }
+        private bool VerifyPasswordHash(string password, string storedHash, string storedSalt)
+{
+    var saltBytes = Convert.FromBase64String(storedSalt);
+    using (var hmac = new HMACSHA512(saltBytes))
+    {
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+        var storedHashBytes = Convert.FromBase64String(storedHash);
+        return computedHash.SequenceEqual(storedHashBytes); 
+    }
+}
         
        
         private string CreateToken(User user)
