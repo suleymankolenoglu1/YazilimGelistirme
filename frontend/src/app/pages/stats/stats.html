@@ -1,0 +1,49 @@
+<div class="stats-container">
+  <h1>Görev İstatistikleri</h1>
+
+  <!-- DAİRE GRAFİK -->
+  <div *ngIf="stats.total > 0; else noTasks" class="pie-chart-container">
+
+    <div class="pie-chart" 
+         [style.--p-overdue]="getPercentage(stats.overdue)"
+         [style.--p-pending]="getPercentage(stats.pending)">
+      
+      <!-- Grafiğin ortasındaki yazı -->
+      <div class="pie-center">
+        <span class="count">{{ stats.total }}</span>
+        <span class="label">Toplam Görev</span>
+      </div>
+    </div>
+    
+    <!-- Grafiğin açıklaması (Legend) -->
+    <ul class="pie-legend">
+      
+      
+      <li class="legend-item done">
+        <span class="dot"></span>
+        Tamamlanan: ({{ stats.done }}) - {{ getPercentage(stats.done) | number:'1.0-1' }}%
+      </li>
+      
+    
+      <li class="legend-item pending">
+        <span class="dot"></span>
+        Daha Vakti Olanlar: ({{ stats.pending }}) - {{ getPercentage(stats.pending) | number:'1.0-1' }}%
+      </li>
+
+
+      <li class="legend-item overdue">
+        <span class="dot"></span>
+        Tarihi Geçen: ({{ stats.overdue }}) - {{ getPercentage(stats.overdue) | number:'1.0-1' }}%
+      </li>
+      
+    </ul>
+  </div> 
+
+  <ng-template #noTasks>
+    <div class="no-tasks-message">
+      <h2>Henüz hiç görev eklemediniz.</h2>
+      <p>İstatistikleri görmek için <a routerLink="/add">yeni bir görev ekleyin</a>.</p>
+    </div>
+  </ng-template>
+
+</div>

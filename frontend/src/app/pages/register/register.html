@@ -1,0 +1,88 @@
+<div class="form-container">
+  <h2>Kayıt Ol</h2>
+  <p>Başlamak için yeni bir hesap oluştur.</p>
+
+  <form #registerForm="ngForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="fullName">Tam Adınız (İsim Soyisim):</label>
+      <input 
+        type="text" 
+        id="fullName" 
+        name="fullName" 
+        [(ngModel)]="userData.fullName"
+        required
+        minlength="3"
+        #fullName="ngModel"
+      >
+     
+      <div *ngIf="fullName.invalid && (fullName.dirty || fullName.touched)" class="error-message">
+        <div *ngIf="fullName.errors?.['required']">Tam Ad zorunludur.</div>
+        <div *ngIf="fullName.errors?.['minlength']">Tam Ad en az 3 karakter olmalıdır.</div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="username">Kullanıcı Adı:</label>
+      <input 
+        type="text" 
+        id="username" 
+        name="username" 
+        [(ngModel)]="userData.username"
+        required
+        minlength="3"
+        #username="ngModel"
+      >
+      
+      <div *ngIf="username.invalid && (username.dirty || username.touched)" class="error-message">
+        <div *ngIf="username.errors?.['required']">Kullanıcı Adı zorunludur.</div>
+        <div *ngIf="username.errors?.['minlength']">Kullanıcı Adı en az 3 karakter olmalıdır.</div>
+      </div>
+    </div>
+
+    
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        [(ngModel)]="userData.email" 
+        required
+        email
+        #email="ngModel"
+      >
+      <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-message">
+        <div *ngIf="email.errors?.['required']">Email zorunludur.</div>
+        <div *ngIf="email.errors?.['email']">Lütfen geçerli bir email girin (örn: test@test.com).</div>
+      </div>
+    </div>
+
+    
+    <div class="form-group">
+      <label for="password">Şifre:</label>
+      <input 
+        type="password" 
+        id="password" 
+        name="password" 
+        [(ngModel)]="userData.password" 
+        required
+        minlength="4"
+        #password="ngModel"
+      >
+      <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error-message">
+        <div *ngIf="password.errors?.['required']">Şifre zorunludur.</div>
+        <div *ngIf="password.errors?.['minlength']">Şifre en az 4 karakter olmalıdır.</div>
+      </div>
+    </div>
+
+    
+    <button type="submit" [disabled]="!registerForm.valid">Kayıt Ol</button>
+  </form>
+
+  
+  <div class="auth-link">
+    <p>Zaten hesabın var mı? 
+      <a [routerLink]="['/login']">Giriş Yap</a>
+    </p>
+  </div>
+</div>

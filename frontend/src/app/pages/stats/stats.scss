@@ -1,0 +1,147 @@
+.stats-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+h1 {
+  color: #005f73;
+  border-bottom: 2px solid #005f73;
+  padding-bottom: 10px;
+  margin-bottom: 2rem;
+}
+
+.pie-chart-container {
+  display: flex;
+  flex-wrap: wrap; 
+  align-items: center;
+  gap: 2rem; 
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.pie-chart {
+  
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  position: relative; 
+
+  @property --p-overdue {
+    syntax: '<number>';
+    initial-value: 0;
+    inherits: false;
+  }
+  @property --p-pending {
+    syntax: '<number>';
+    initial-value: 0;
+    inherits: false;
+  }
+  
+  --c-done: #28a745;     
+  --c-pending: #ffc107;  
+  --c-overdue: #dc3545;  
+
+  --perc-overdue: calc(var(--p-overdue) * 1%);
+  --perc-pending: calc(var(--p-pending) * 1%);
+  
+  // Toplam yüzdeyi hesapla
+  --cumulative-pending: calc(var(--perc-overdue) + var(--perc-pending));
+
+  background-image: conic-gradient(
+    var(--c-overdue) 0 var(--perc-overdue),
+    var(--c-pending) var(--perc-overdue) var(--cumulative-pending),
+    var(--c-done) var(--cumulative-pending) 100%
+  );
+
+  animation: pie-spin 1s ease-in-out;
+}
+
+.pie-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+  
+  .count {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+  }
+  .label {
+    font-size: 0.9rem;
+    color: #555;
+  }
+}
+
+.pie-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex: 1; 
+  min-width: 200px; 
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 500;
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+  }
+  
+  &.done .dot { background-color: var(--c-done); }
+  &.pending .dot { background-color: var(--c-pending); }
+  &.overdue .dot { background-color: var(--c-overdue); }
+}
+
+.no-tasks-message {
+  text-align: center;
+  padding: 3rem;
+  background-color: #fff;
+  border-radius: 8px;
+  
+  h2 {
+    color: #555;
+  }
+  
+  a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@keyframes pie-spin {
+  from {
+    transform: rotate(-180deg) scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}

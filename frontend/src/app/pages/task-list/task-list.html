@@ -1,0 +1,50 @@
+<div class="task-list-header">
+  <h2>Görev Listem</h2>
+  <!-- KATEGORİ FİLTRESİ-->
+  <div class="filter-container">
+    <label for="category-filter">Kategoriye Göre Filtrele:</label>
+    <select 
+      id="category-filter" 
+      [(ngModel)]="selectedCategory" 
+      (change)="onFilterChange()"
+      name="categoryFilter"
+    >
+      <option *ngFor="let category of categories" [value]="category">
+        {{ category === 'all' ? 'Tümü' : category }}
+      </option>
+    </select>
+  </div>
+</div>
+<!--görev kısmı-->
+<ul class="task-list-container">
+  <li *ngFor="let task of filteredTasks" 
+      [attr.data-status]="task.status"
+      [class.overdue]="isOverdue(task)"
+      [class.due-soon]="isDueSoon(task)">
+    <div class="task-info">
+      <strong>{{ task.title }}</strong>
+      <span>(Kategori: {{ task.category }})</span> 
+      <p>{{ task.description }} ({{ task.dueTime }})</p> 
+    </div>
+    
+    <!-- Sağ taraf: Eylemler -->
+    <div class="task-actions">
+      <input 
+            type="checkbox"
+            class="task-list-checkbox" 
+            [checked]="task.status === 'done'"
+            [disabled]="task.status === 'overdue'"
+            (change)="onToggleStatus(task)"
+            title="Görevi tamamlandı olarak işaretle"
+          >
+      <a [routerLink]="['/edit', task.id]" class="edit-btn">Düzenle</a>
+      <button (click)="onDelete(task.id)" class="delete-btn">Sil</button>
+    </div>
+        
+  </li>
+</ul>
+
+<div *ngIf="filteredTasks.length === 0" class="no-tasks-message">
+  <h3>Bu filtrede gösterilecek görev bulunamadı.</h3>
+  <p>"Tümü" kategorisini seçmeyi deneyin.</p>
+</div>

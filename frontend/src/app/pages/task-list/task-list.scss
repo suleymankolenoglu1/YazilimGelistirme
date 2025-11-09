@@ -1,0 +1,166 @@
+.task-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+ul {
+  list-style-type: none; 
+  padding: 0;
+}
+
+li {
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  border-left: 5px solid #ccc; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+
+  strong {
+    font-size: 1.1em;
+  }
+}
+
+li[data-status="done"] {
+  border-left: 5px solid #28a745;
+  opacity: 0.7;
+  
+  /* 'done' ise sağdaki tarih uyarılarını GİZLE */
+  &.due-soon, &.overdue {
+    border-right-color: transparent;
+    background-color: #f9f9f9;
+  }
+}
+
+/* Daha Vakti Olan (Sarı) */
+li[data-status="pending"] {
+  border-left: 5px solid #ffc107; 
+}
+
+/* Tarihi Geçen (Kırmızı) */
+li[data-status="overdue"] {
+  border-left: 5px solid #dc3545;
+  
+  &.due-soon {
+    border-right-color: #dc3545; 
+  }
+}
+
+.delete-btn {
+  background-color: #dc3545; 
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+
+  &:hover {
+    background-color: #c82333;
+  }
+}
+
+.edit-btn {
+  background-color: #ffc107; 
+  color: #212529; 
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  text-decoration: none; 
+  margin-right: 5px; 
+
+  &:hover {
+    background-color: #e0a800;
+  }
+}
+
+.task-list-header {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  flex-wrap: wrap; 
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  label {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  select {
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 0.9rem;
+  }
+}
+
+.task-list-container {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.task-list-checkbox {
+  width: 22px;
+  height: 22px;
+  margin-right: 10px;
+  accent-color: #005f73; 
+  cursor: pointer;
+}
+
+
+.task-info span {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #555;
+  margin-left: 0.5rem;
+  background-color: #eee;
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+
+.no-tasks-message {
+  text-align: center;
+  padding: 3rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    color: #555;
+  }
+}
+
+li.due-soon {
+  border-right: 5px solid #ffc107; 
+  background-color: #fffaf0; 
+}
+
+
+li.overdue {
+  border-right: 5px solid #dc3545; 
+  background-color: #fff5f5; 
+}
+

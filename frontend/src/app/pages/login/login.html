@@ -1,0 +1,48 @@
+<div class="form-container">
+  <h2>Giriş Yap</h2>
+  <p>Görevlerini görmek için giriş yap.</p>
+
+  
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="username">Kullanıcı Adı:</label>
+      <input 
+        type="text" 
+        id="username" 
+        name="username" 
+        [(ngModel)]="userData.username" 
+        required
+        #username="ngModel"
+      >
+
+      <div *ngIf="username.invalid && (username.dirty || username.touched)" class="error-message">
+        <div *ngIf="username.errors?.['required']">Kullanıcı Adı zorunludur.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Şifre:</label>
+      <input 
+        type="password" 
+        id="password" 
+        name="password" 
+        [(ngModel)]="userData.password" 
+        required
+        #password="ngModel"
+      >
+      <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error-message">
+        <div *ngIf="password.errors?.['required']">Şifre zorunludur.</div>
+      </div>
+    </div>
+
+    
+    <button type="submit" [disabled]="!loginForm.valid">Giriş Yap</button>
+  </form>
+
+  
+  <div class="auth-link">
+    <p>Hesabın yok mu? 
+      <a [routerLink]="['/register']">Hemen Kayıt Ol</a>
+    </p>
+  </div>
+</div>
