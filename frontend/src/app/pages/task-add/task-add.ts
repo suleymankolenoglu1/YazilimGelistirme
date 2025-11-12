@@ -1,70 +1,106 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
-import { TaskService, Task } from '../../services/task';
+import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TaskService } from '../../services/task';
 
 @Component({
   selector: 'app-task-add',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './task-add.html',
-  styleUrl: './task-add.scss'
+  styleUrl: './task-add.scss',
 })
-export class TaskAdd implements OnInit { 
+export class TaskAdd implements OnInit {
+  isEditMode = false;
+  taskId: number | null = null;
 
-  public task: Task = {
-    id: 0,
+  task = {
     title: '',
     description: '',
     category: '',
-    status: 'pending',
     dueDate: '',
-    dueTime: ''
+    dueTime: '',
+    status: 'todo',
   };
 
-  public isEditMode = false;
-  public pageTitle = 'Yeni Görev Ekle'; 
-
-  
   constructor(
-    private taskService: TaskService, 
+    private taskService: TaskService,
     private router: Router,
-    private route: ActivatedRoute 
-  ) { }
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-   
-    const idFromUrl = +this.route.snapshot.params['id'];
-    
-    if (idFromUrl) {
-      this.isEditMode = true;
-      this.pageTitle = 'Görevi Düzenle';
-      
-      const existingTask = this.taskService.getTaskById(idFromUrl);
+    // Route parametresinden ID'yi al
+    const id = this.route.snapshot.paramMap.get('id');
 
-      if (existingTask) {
-        
-        this.task = { ...existingTask }; // Formu doldur
-      } else {
-        alert('Görev bulunamadı!');
-        this.router.navigate(['/']);
-      }
+    if (id) {
+      // Edit mode
+      this.isEditMode = true;
+      this.taskId = parseInt(id);
+      this.loadTask(this.taskId);
     }
+  }
+
+  loadTask(id: number): void {
+    this.taskService.getTasks().subscribe({
+      next: (tasks) => {
+        const foundTask = tasks.find((t) => t.id === id);
+
+        if (foundTask) {
+          this.task = {
+            title: foundTask.title,
+            description: foundTask.description || '',
+            category: foundTask.category,
+            dueDate: foundTask.dueDate,
+            dueTime: foundTask.dueTime,
+            status: foundTask.status,
+          };
+          console.log('Task yüklendi:', this.task);
+        } else {
+          alert('Görev bulunamadı!');
+          this.router.navigate(['/task-list']);
+        }
+      },
+      error: (error) => {
+        console.error('Task yükleme hatası:', error);
+        alert('Görev yüklenemedi!');
+        this.router.navigate(['/task-list']);
+      },
+    });
   }
 
   onSubmit(): void {
-    if (this.isEditMode) {
-      this.taskService.updateTask(this.task);
-      alert('Görev başarıyla güncellendi!');
-    }
-    else {
-      this.taskService.addTask(this.task);
-      alert('Yeni görev başarıyla eklendi!');
-    }
+    console.log('Task formu gönderildi:', this.task);
 
-    // Her iki durumda da iş bitince ana sayfaya yönlendir
-    this.router.navigate(['/']); 
+    if (this.isEditMode && this.taskId) {
+      // GÜNCELLEME
+      this.taskService.updateTask(this.taskId, this.task).subscribe({
+        next: (response) => {
+          console.log('Task güncellendi:', response);
+          alert('Görev başarıyla güncellendi!');
+          this.router.navigate(['/task-list']);
+        },
+        error: (error) => {
+          console.error('Task güncelleme hatası:', error);
+          const errorMessage = error.error?.message || error.error || 'Görev güncellenemedi!';
+          alert(errorMessage);
+        },
+      });
+    } else {
+      // EKLEME
+      this.taskService.addTask(this.task).subscribe({
+        next: (response) => {
+          console.log('Task eklendi:', response);
+          alert('Görev başarıyla eklendi!');
+          this.router.navigate(['/task-list']);
+        },
+        error: (error) => {
+          console.error('Task ekleme hatası:', error);
+          const errorMessage = error.error?.message || error.error || 'Görev eklenemedi!';
+          alert(errorMessage);
+        },
+      });
+    }
   }
-
 }

@@ -10,7 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using backend.Models.DTOs;
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -50,7 +50,7 @@ namespace backend.Controllers
             await _context.SaveChangesAsync();
 
             
-            return StatusCode(201, "Kullanıcı başarıyla kaydedildi.");
+            return StatusCode(201, new { message = "Kullanıcı başarıyla kaydedildi." });
         }
 
         

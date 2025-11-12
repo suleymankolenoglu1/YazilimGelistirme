@@ -1,38 +1,52 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // *ngIf, *ngFor için
-import { TaskService } from '../../services/task'; 
+import { CommonModule } from '@angular/common';
+import { TaskService } from '../../services/task';
 
 interface TaskStats {
   total: number;
   done: number;
   pending: number;
-  overdue: number;
+  inProgress: number;
 }
 
 @Component({
   selector: 'app-stats',
   standalone: true,
-  imports: [CommonModule], 
+  imports: [CommonModule],
   templateUrl: './stats.html',
-  styleUrl: './stats.scss'
+  styleUrl: './stats.scss',
 })
-export class Stats implements OnInit { 
+export class Stats implements OnInit {
   public stats: TaskStats = {
     total: 0,
     done: 0,
     pending: 0,
-    overdue: 0
+    inProgress: 0,
   };
-  //entegre edilenler
-  constructor(private taskService: TaskService) { }
-  ngOnInit(): void 
-  {
-    this.stats = this.taskService.getStats();
+
+  constructor(private taskService: TaskService) {}
+
+  ngOnInit(): void {
+    this.loadStats();
   }
-  //yüzde hesaplama fonksiyonu
+
+  loadStats(): void {
+    this.taskService.getStats().subscribe({
+      next: (stats) => {
+        this.stats = stats;
+        console.log('Stats yüklendi:', stats);
+      },
+      error: (error) => {
+        console.error('Stats yükleme hatası:', error);
+        alert('İstatistikler yüklenemedi!');
+      },
+    });
+  }
+
+  // Yüzde hesaplama fonksiyonu
   getPercentage(count: number): number {
     if (this.stats.total === 0) {
-      return 0; 
+      return 0;
     }
     return (count / this.stats.total) * 100;
   }

@@ -170,6 +170,44 @@ public async Task<IActionResult> AddTask([FromBody] TaskCreateDto request)
                 Count = tasksByStatus.Count,
                 Tasks = tasksByStatus
             });
-        }
+       
     }
+    // GET /api/Task/tasks/stats
+[HttpGet("tasks/stats")]
+public async Task<IActionResult> GetStats()
+{
+    var currentUserId = GetCurrentUserId();
+
+    var allTasks = await _context.MyTasks
+                                  .Where(t => t.UserId == currentUserId)
+                                  .ToListAsync();
+
+    var total = allTasks.Count;
+    var done = allTasks.Count(t => t.Status.ToLower() == "completed");
+    var pending = allTasks.Count(t => t.Status.ToLower() == "todo");
+    var inProgress = allTasks.Count(t => t.Status.ToLower() == "in-progress");
+
+    // Kategorilere göre dağılım
+    var byCategory = allTasks
+        .GroupBy(t => t.Category)
+        .Select(g => new
+        {
+            Category = g.Key,
+            Total = g.Count(),
+            Done = g.Count(t => t.Status.ToLower() == "completed"),
+            Pending = g.Count(t => t.Status.ToLower() == "todo"),
+            InProgress = g.Count(t => t.Status.ToLower() == "in-progress")
+        })
+        .ToList();
+
+    return Ok(new
+    {
+        Total = total,
+        Done = done,
+        Pending = pending,
+        InProgress = inProgress,
+        ByCategory = byCategory
+    });
+}
+}
 }

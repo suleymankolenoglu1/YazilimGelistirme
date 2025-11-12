@@ -2,47 +2,26 @@
   <h2>Yeni Görev Ekle</h2>
 
   <form #taskForm="ngForm" (ngSubmit)="onSubmit()">
-
     <div class="form-group">
       <label for="title">Görev Başlığı:</label>
-      <input 
-        type="text" 
-        id="title" 
-        name="title" 
-        [(ngModel)]="task.title"
-        required>
+      <input type="text" id="title" name="title" [(ngModel)]="task.title" required />
     </div>
-    
+
     <div class="form-group">
       <label for="category">Kategori:</label>
-      <input 
-        type="text" 
-        id="category" 
-        name="category" 
-        [(ngModel)]="task.category">
+      <input type="text" id="category" name="category" [(ngModel)]="task.category" />
     </div>
 
     <div class="form-group">
       <label for="dueDate">Teslim Tarihi:</label>
-      <input 
-        type="date" 
-        id="dueDate" 
-        name="dueDate" 
-        [(ngModel)]="task.dueDate">
+      <input type="date" id="dueDate" name="dueDate" [(ngModel)]="task.dueDate" />
     </div>
 
-    
     <div class="form-group">
       <label for="dueTime">Teslim Saati:</label>
-      <input 
-        type="time" 
-        id="dueTime" 
-        name="dueTime" 
-        [(ngModel)]="task.dueTime">
+      <input type="time" id="dueTime" name="dueTime" [(ngModel)]="task.dueTime" />
     </div>
-    
+
     <button type="submit">{{ isEditMode ? 'Görevi Güncelle' : 'Görevi Kaydet' }}</button>
   </form>
-
-  <pre>{{ taskForm.value | json }}</pre>
 </div>
