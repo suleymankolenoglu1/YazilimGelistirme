@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace backend.Controllers
 {
@@ -26,6 +27,15 @@ namespace backend.Controllers
             _context = context;
         }
 
+        private string GetUserRole()
+        {
+            return User.FindFirst(ClaimTypes.Role)?.Value;
+        }
+
+        
+
+       
+
         
         private int GetCurrentUserId()
         {
@@ -39,6 +49,16 @@ namespace backend.Controllers
             }
             return userId;
         }
+
+        
+
+        
+        
+
+        
+
+        
+        
 
         
         [HttpGet("tasks")]

@@ -8,6 +8,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using backend.Models.DTOs;
+using Microsoft.Extensions.Caching.Memory;
 namespace backend.Controllers
 {
     [Route("api/auth")]
@@ -110,6 +111,7 @@ namespace backend.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role)
                 
             };
 

@@ -13,6 +13,7 @@ namespace backend.Data
         
         public DbSet<User> Users { get; set; }
         public DbSet<MyTask> MyTasks { get; set; }
+        public DbSet<Attachment> Attachments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
