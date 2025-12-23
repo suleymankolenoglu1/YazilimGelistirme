@@ -103,6 +103,13 @@ li[data-status="overdue"] {
   gap: 1rem;
 }
 
+.filters-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .filter-container {
   display: flex;
   align-items: center;
@@ -111,14 +118,27 @@ li[data-status="overdue"] {
   label {
     font-weight: 500;
     color: #333;
+    white-space: nowrap;
   }
   
   select {
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
     border-radius: 5px;
     border: 1px solid #ccc;
     background-color: #fff;
     font-size: 0.9rem;
+    min-width: 150px;
+    cursor: pointer;
+    
+    &:hover {
+      border-color: #005f73;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: #005f73;
+      box-shadow: 0 0 0 2px rgba(0, 95, 115, 0.2);
+    }
   }
 }
 

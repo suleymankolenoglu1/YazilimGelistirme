@@ -15,6 +15,7 @@ export class TaskListComponent implements OnInit {
   private allTasks: Task[] = [];
   public filteredTasks: Task[] = [];
   public selectedCategory: string = 'all';
+  public selectedStatus: string = 'all'; // Yeni: Durum filtresi
   public categories: string[] = ['all'];
   public taskAttachments: { [taskId: number]: Attachment[] } = {};
 
@@ -67,13 +68,25 @@ export class TaskListComponent implements OnInit {
 
   // Filtre değiştiğinde çağrılan fonksiyon
   onFilterChange(): void {
-    console.log('Filtre değişti:', this.selectedCategory);
+    console.log('Filtre değişti - Kategori:', this.selectedCategory, 'Durum:', this.selectedStatus);
 
-    if (this.selectedCategory === 'all') {
-      this.filteredTasks = [...this.allTasks];
-    } else {
-      this.filteredTasks = this.allTasks.filter((task) => task.category === this.selectedCategory);
+    let result = [...this.allTasks];
+
+    // Kategori filtresi
+    if (this.selectedCategory !== 'all') {
+      result = result.filter((task) => task.category === this.selectedCategory);
     }
+
+    // Durum filtresi (completed/pending/overdue)
+    if (this.selectedStatus === 'completed') {
+      result = result.filter((task) => task.status === 'completed');
+    } else if (this.selectedStatus === 'pending') {
+      result = result.filter((task) => task.status !== 'completed' && !this.isOverdue(task));
+    } else if (this.selectedStatus === 'overdue') {
+      result = result.filter((task) => task.status !== 'completed' && this.isOverdue(task));
+    }
+
+    this.filteredTasks = result;
   }
 
   // Görev silme fonksiyonu

@@ -1,18 +1,36 @@
 <div class="task-list-header">
   <h2>Görev Listem</h2>
-  <!-- KATEGORİ FİLTRESİ-->
-  <div class="filter-container">
-    <label for="category-filter">Kategoriye Göre Filtrele:</label>
-    <select
-      id="category-filter"
-      [(ngModel)]="selectedCategory"
-      (change)="onFilterChange()"
-      name="categoryFilter"
-    >
-      <option *ngFor="let category of categories" [value]="category">
-        {{ category === 'all' ? 'Tümü' : category }}
-      </option>
-    </select>
+  <!-- FİLTRELER -->
+  <div class="filters-wrapper">
+    <!-- KATEGORİ FİLTRESİ -->
+    <div class="filter-container">
+      <label for="category-filter">Kategori:</label>
+      <select
+        id="category-filter"
+        [(ngModel)]="selectedCategory"
+        (change)="onFilterChange()"
+        name="categoryFilter"
+      >
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category === 'all' ? 'Tümü' : category }}
+        </option>
+      </select>
+    </div>
+    <!-- DURUM FİLTRESİ -->
+    <div class="filter-container">
+      <label for="status-filter">Durum:</label>
+      <select
+        id="status-filter"
+        [(ngModel)]="selectedStatus"
+        (change)="onFilterChange()"
+        name="statusFilter"
+      >
+        <option value="all">Tümü</option>
+        <option value="completed">Tamamlananlar</option>
+        <option value="pending">Bekleyenler</option>
+        <option value="overdue">Gecikenler</option>
+      </select>
+    </div>
   </div>
 </div>
 <!--görev kısmı-->
