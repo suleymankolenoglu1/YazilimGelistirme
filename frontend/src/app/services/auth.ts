@@ -70,4 +70,21 @@ export class AuthService {
       return null;
     }
   }
+
+    getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  isAdmin(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      return role === 'Admin';
+    } catch {
+      return false;
+    }
+  }
 }

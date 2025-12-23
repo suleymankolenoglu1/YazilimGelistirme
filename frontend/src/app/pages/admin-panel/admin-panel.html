@@ -1,0 +1,89 @@
+<div class="admin-container">
+  <h1>A - A - Admin Panel</h1>
+
+  <div class="admin-content">
+    <!-- Kullanıcı Listesi -->
+    <div class="users-section">
+      <h2>Kullanıcılar</h2>
+      <ul class="user-list">
+        <li 
+          *ngFor="let user of users" 
+          (click)="selectUser(user)"
+          [class.selected]="selectedUser?.id === user.id"
+          [class.admin-user]="user.role === 'Admin'"
+        >
+          <span class="user-icon">{{ user.role === 'Admin' ? '👑' : '👤' }}</span>
+          <div class="user-info">
+            <strong>{{ user.fullName }}</strong>
+            <small>{{ user.username }} • {{ user.email }}</small>
+          </div>
+          <span class="role-badge" [class.admin]="user.role === 'Admin'">
+            {{ user.role }}
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Seçili Kullanıcının Görevleri -->
+    <div class="tasks-section" *ngIf="selectedUser">
+      <div class="tasks-header">
+        <h2>{{ selectedUser.fullName }} - Görevleri</h2>
+        <button class="assign-btn" (click)="toggleAssignForm()">
+          {{ showAssignForm ? '✕ İptal' : '+ Görev Ata' }}
+        </button>
+      </div>
+
+      <!-- Görev Atama Formu -->
+      <div class="assign-form" *ngIf="showAssignForm">
+        <h3>Yeni Görev Ata</h3>
+        <div class="form-group">
+          <label>Başlık *</label>
+          <input type="text" [(ngModel)]="newTask.title" placeholder="Görev başlığı">
+        </div>
+        <div class="form-group">
+          <label>Açıklama</label>
+          <textarea [(ngModel)]="newTask.description" placeholder="Açıklama"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kategori</label>
+            <select [(ngModel)]="newTask.category">
+              <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tarih</label>
+            <input type="date" [(ngModel)]="newTask.dueDate">
+          </div>
+          <div class="form-group">
+            <label>Saat</label>
+            <input type="time" [(ngModel)]="newTask.dueTime">
+          </div>
+        </div>
+        <button class="submit-btn" (click)="assignTask()">Görevi Ata</button>
+      </div>
+
+      <!-- Görev Listesi -->
+      <ul class="task-list" *ngIf="userTasks.length > 0">
+        <li *ngFor="let task of userTasks" [ngClass]="getTaskColorClass(task)">
+          <div class="task-info">
+            <strong>{{ task.title }}</strong>
+            <span class="category-badge">{{ task.category }}</span>
+            <p>{{ task.description }}</p>
+            <small>{{ task.dueDate | date:'dd.MM.yyyy' }} {{ task.dueTime?.slice(0,5) }}</small>
+          </div>
+          <span class="status-badge">{{ task.status === 'completed' ? '✅' : (isOverdue(task) ? '❌' : '⏳') }}</span>
+        </li>
+      </ul>
+
+      <div class="no-tasks" *ngIf="userTasks.length === 0 && !showAssignForm">
+        <p>Bu kullanıcının henüz görevi yok.</p>
+      </div>
+    </div>
+
+    <!-- Kullanıcı Seçilmedi -->
+    <div class="no-selection" *ngIf="!selectedUser">
+      <p>👈 Görevlerini görmek için bir kullanıcı seçin</p>
+    </div>
+  </div>
+</div>

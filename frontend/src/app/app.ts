@@ -27,4 +27,8 @@ export class App {
     }
     return fullName.split(' ')[0]; // split fonk ile ilk ismi alır
   }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
 }

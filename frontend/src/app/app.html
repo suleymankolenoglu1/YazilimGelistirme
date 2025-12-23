@@ -16,6 +16,7 @@
       <li><a routerLink="/">Görev Listem</a></li>
       <li><a routerLink="/add">Yeni Görev Ekle</a></li>
       <li><a routerLink="/stats">İstatistikler</a></li>
+      <li *ngIf="isAdmin()"><a routerLink="/admin">👑 Admin</a></li>
       <li>
         <button (click)="onLogout()" class="logout-btn">Çıkış Yap</button>
       </li>

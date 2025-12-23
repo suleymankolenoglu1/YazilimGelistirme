@@ -32,11 +32,6 @@ namespace backend.Controllers
             return User.FindFirst(ClaimTypes.Role)?.Value;
         }
 
-        
-
-       
-
-        
         private int GetCurrentUserId()
         {
             
@@ -51,17 +46,6 @@ namespace backend.Controllers
             }
             return userId;
         }
-
-        
-
-        
-        
-
-        
-
-        
-        
-
         
         [HttpGet("tasks")]
         public async Task<IActionResult> TaskList()
@@ -200,40 +184,79 @@ public async Task<IActionResult> AddTask([FromBody] TaskCreateDto request)
                 Tasks = tasksByStatus
             });
        
-    }
-    // GET /api/Task/tasks/stats
-[HttpGet("tasks/stats")]
-public async Task<IActionResult> GetStats()
-{
-    var currentUserId = GetCurrentUserId();
+        }
+        // GET /api/Task/tasks/stats
+        [HttpGet("tasks/stats")]
+        public async Task<IActionResult> GetStats()
+        {
+            var currentUserId = GetCurrentUserId();
 
-    var allTasks = await _context.MyTasks
-                                  .Where(t => t.UserId == currentUserId)
-                                  .ToListAsync();
+            var allTasks = await _context.MyTasks
+                                        .Where(t => t.UserId == currentUserId)
+                                        .ToListAsync();
 
-    var now = DateTime.Now.Date; // Local tarih, sadece gün (saat hariç)
-    var total = allTasks.Count;
-    
-    // Tamamlanan görevler (yeşil)
-    var done = allTasks.Count(t => t.Status.ToLower() == "completed");
-    
-    // Süresi geçmiş ve tamamlanmamış görevler (kırmızı)
-    var overdue = allTasks.Count(t => 
-        t.Status.ToLower() != "completed" && 
-        t.DueDate.Date < now);
-    
-    // Süresi geçmemiş ve tamamlanmamış görevler (sarı)
-    var pending = allTasks.Count(t => 
-        t.Status.ToLower() != "completed" && 
-        t.DueDate.Date >= now);
+            var now = DateTime.Now.Date; // Local tarih, sadece gün (saat hariç)
+            var total = allTasks.Count;
+            
+            // Tamamlanan görevler (yeşil)
+            var done = allTasks.Count(t => t.Status.ToLower() == "completed");
+            
+            // Süresi geçmiş ve tamamlanmamış görevler (kırmızı)
+            var overdue = allTasks.Count(t => 
+                t.Status.ToLower() != "completed" && 
+                t.DueDate.Date < now);
+            
+            // Süresi geçmemiş ve tamamlanmamış görevler (sarı)
+            var pending = allTasks.Count(t => 
+                t.Status.ToLower() != "completed" && 
+                t.DueDate.Date >= now);
 
-    return Ok(new
-    {
-        Total = total,
-        Done = done,
-        Pending = pending,
-        Overdue = overdue
-    });
-}
+            return Ok(new
+            {
+                Total = total,
+                Done = done,
+                Pending = pending,
+                Overdue = overdue
+            });
+        }
+
+        // Admin: Belirli kullanıcının görevlerini getir
+        [HttpGet("user/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetUserTasks(int userId)
+        {
+            var tasks = await _context.MyTasks
+                .Where(t => t.UserId == userId)
+                .OrderByDescending(t => t.CreatedAt)
+                .ToListAsync();
+            return Ok(tasks);
+        }
+
+        // Admin: Kullanıcıya görev ata
+        [HttpPost("assign/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AssignTask(int userId, [FromBody] TaskCreateDto dto)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return NotFound("Kullanıcı bulunamadı");
+
+            var task = new MyTask
+            {
+                Title = dto.Title,
+                Description = dto.Description,
+                Category = dto.Category,
+                DueDate = dto.DueDate,
+                DueTime = TimeSpan.TryParse(dto.DueTime, out var t) ? t : TimeSpan.Zero,
+                Status = "todo",
+                UserId = userId,
+                CreatedAt = DateTime.Now,
+                LastModified = DateTime.Now
+            };
+
+            _context.MyTasks.Add(task);
+            await _context.SaveChangesAsync();
+            return Ok(task);
+        }
+
 }
 }

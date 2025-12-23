@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using backend.Models.DTOs;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Authorization;
+
 namespace backend.Controllers
 {
     [Route("api/auth")]
@@ -83,25 +85,24 @@ namespace backend.Controllers
 
         
         private void CreatePasswordHash(string password, out string passwordHash, out string passwordSalt)
-{
-    using (var hmac = new HMACSHA512())
-    {
-        passwordSalt = Convert.ToBase64String(hmac.Key);
-        passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(password))); 
-    }
-}
+        {
+            using (var hmac = new HMACSHA512())
+            {
+                passwordSalt = Convert.ToBase64String(hmac.Key);
+                passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(password))); 
+            }
+        }
 
-        
         private bool VerifyPasswordHash(string password, string storedHash, string storedSalt)
-{
-    var saltBytes = Convert.FromBase64String(storedSalt);
-    using (var hmac = new HMACSHA512(saltBytes))
-    {
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-        var storedHashBytes = Convert.FromBase64String(storedHash);
-        return computedHash.SequenceEqual(storedHashBytes); 
-    }
-}
+        {
+            var saltBytes = Convert.FromBase64String(storedSalt);
+            using (var hmac = new HMACSHA512(saltBytes))
+            {
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var storedHashBytes = Convert.FromBase64String(storedHash);
+                return computedHash.SequenceEqual(storedHashBytes); 
+            }
+        }
         
        
         private string CreateToken(User user)
@@ -133,6 +134,17 @@ namespace backend.Controllers
             
             var jwtHandler = new JwtSecurityTokenHandler();
             return jwtHandler.WriteToken(token);
+        }
+
+        // Admin: Tüm kullanıcıları getir
+        [HttpGet("users")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _context.Users
+                .Select(u => new { u.Id, u.FullName, u.Username, u.Email, u.Role, u.CreatedAt })
+                .ToListAsync();
+            return Ok(users);
         }
     }
 }

@@ -110,13 +110,16 @@ export class TaskListComponent implements OnInit {
   isOverdue(task: Task): boolean {
     if (task.status === 'completed' || !task.dueDate) return false;
 
-    const today = new Date();
+    const now = new Date();
     const dueDate = new Date(task.dueDate);
 
-    today.setHours(0, 0, 0, 0);
-    dueDate.setHours(0, 0, 0, 0);
+    if (task.dueTime) {
+    // dueTime ör: "21:50"
+    const [h, m] = task.dueTime.split(':');
+    dueDate.setHours(Number(h), Number(m), 0, 0);
+    }
 
-    return dueDate < today;
+    return dueDate < now;
   }
 
   isDueSoon(task: Task): boolean {

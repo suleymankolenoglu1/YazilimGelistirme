@@ -3,6 +3,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using backend.Data;
+using backend.Models.Entities;
+using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,4 +93,32 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Admin kullanıcısı olusturduk
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    if (!db.Users.Any(u => u.Role == "Admin"))
+    {
+        // Şifre hash'leme (HMAC yöntemi)
+        using var hmac = new HMACSHA512();
+        var passwordSalt = Convert.ToBase64String(hmac.Key);
+        var passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes("diggi242")));
+        
+        var admin = new User
+        {
+            FullName = "diggi",
+            Username = "diggi",
+            Email = "diggi@diggi.com",
+            Role = "Admin",
+            PasswordHash = passwordHash,
+            PasswordSalt = passwordSalt,
+            CreatedAt = DateTime.Now
+        };
+        db.Users.Add(admin);
+        db.SaveChanges();
+        Console.WriteLine("✅ Admin kullanıcısı oluşturuldu!");
+    }
+}
+
 app.Run();
+
