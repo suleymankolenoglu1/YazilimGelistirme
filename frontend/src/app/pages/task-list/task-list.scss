@@ -32,6 +32,13 @@ li {
   }
 }
 
+.task-date {
+  color: #666;
+  font-size: 0.9em;
+  margin-top: 5px;
+  display: block;
+}
+
 li[data-status="done"] {
   border-left: 5px solid #28a745;
   opacity: 0.7;
@@ -164,3 +171,29 @@ li.overdue {
   background-color: #fff5f5; 
 }
 
+// Süresi geçmiş - Kırmızı çerçeve
+.task-overdue {
+  border: 3px solid #e74c3c !important;
+  background-color: rgba(231, 76, 60, 0.1) !important;
+  border-left-width: 3px !important;
+}
+
+// Süresi var - Sarı çerçeve  
+.task-pending {
+  border: 3px solid #f39c12 !important;
+  background-color: rgba(243, 156, 18, 0.1) !important;
+  border-left-width: 3px !important;
+}
+
+// Tamamlandı - Yeşil çerçeve
+.task-completed {
+  border: 3px solid #27ae60 !important;
+  background-color: rgba(39, 174, 96, 0.1) !important;
+  border-left-width: 3px !important;
+}
+
+// Kilitli checkbox
+.task-list-checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

@@ -5,8 +5,9 @@
   <div *ngIf="stats.total > 0; else noTasks" class="pie-chart-container">
     <div
       class="pie-chart"
-      [style.--p-inProgress]="getPercentage(stats.inProgress)"
+      [style.--p-done]="getPercentage(stats.done)"
       [style.--p-pending]="getPercentage(stats.pending)"
+      [style.--p-overdue]="getPercentage(stats.overdue)"
     >
       <!-- Grafiğin ortasındaki yazı -->
       <div class="pie-center">
@@ -27,10 +28,10 @@
         Bekleyen: ({{ stats.pending }}) - {{ getPercentage(stats.pending) | number : '1.0-1' }}%
       </li>
 
-      <li class="legend-item inProgress">
+      <li class="legend-item overdue">
         <span class="dot"></span>
-        Devam Eden: ({{ stats.inProgress }}) -
-        {{ getPercentage(stats.inProgress) | number : '1.0-1' }}%
+        Süresi Geçmiş: ({{ stats.overdue }}) -
+        {{ getPercentage(stats.overdue) | number : '1.0-1' }}%
       </li>
     </ul>
   </div>

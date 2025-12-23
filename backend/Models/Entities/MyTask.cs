@@ -12,7 +12,7 @@ namespace backend.Models.Entities
         public string Description { get; set; } = "";
         public string Category { get; set; } = "";
         public string Status { get; set; } = "todo"; 
-        public string AttachmentPath {get;set;} // Default value
+        public string? AttachmentPath {get;set;} // Nullable - her görevin attachment'ı olmayabilir
         public DateTime DueDate { get; set; }
         public TimeSpan DueTime { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;

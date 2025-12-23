@@ -27,6 +27,7 @@ namespace backend.Data
                 entity.Property(e => e.Id).HasColumnName("id");
                 entity.Property(e => e.FullName).HasColumnName("full_name").IsRequired();
                 entity.Property(e => e.Username).HasColumnName("username").IsRequired();
+                entity.Property(e => e.Role).HasColumnName("role").HasDefaultValue("User");
                 entity.Property(e => e.Email).HasColumnName("email").IsRequired();
                 entity.Property(e => e.PasswordHash).HasColumnName("password_hash").IsRequired();
                 entity.Property(e => e.PasswordSalt).HasColumnName("password_salt").IsRequired();
@@ -46,6 +47,7 @@ namespace backend.Data
                 entity.Property(e => e.Description).HasColumnName("description");
                 entity.Property(e => e.Category).HasColumnName("category").IsRequired();
                 entity.Property(e => e.Status).HasColumnName("status").HasDefaultValue("todo");
+                entity.Property(e => e.AttachmentPath).HasColumnName("attachment_path");
                 entity.Property(e => e.DueDate).HasColumnName("due_date");
                 entity.Property(e => e.DueTime).HasColumnName("due_time");
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");

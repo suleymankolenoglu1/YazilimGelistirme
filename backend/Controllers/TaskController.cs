@@ -44,8 +44,10 @@ namespace backend.Controllers
             
             if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
             {
-                
-                throw new UnauthorizedAccessException("Geçerli kullanıcı ID'si token'da bulunamadı.");
+                Console.WriteLine("ERROR: User ID claim bulunamadı veya parse edilemedi!");
+                Console.WriteLine($"UserIdClaim value: {userIdClaim}");
+                Console.WriteLine($"User.Identity.IsAuthenticated: {User.Identity?.IsAuthenticated}");
+                throw new UnauthorizedAccessException("Geçerli kullanıcı ID'si token'da bulunamadı. Lütfen tekrar giriş yapın.");
             }
             return userId;
         }
@@ -84,30 +86,37 @@ namespace backend.Controllers
         [HttpPost("tasks")]
 public async Task<IActionResult> AddTask([FromBody] TaskCreateDto request)
 {
-    var currentUserId = GetCurrentUserId();
-
-    // DueTime string'i TimeSpan'e çevirme
-    if (!TimeSpan.TryParse(request.DueTime, out TimeSpan dueTime))
+    try
     {
-        return BadRequest("Geçersiz saat formatı. Lütfen HH:mm formatında giriniz.");
+        var currentUserId = GetCurrentUserId();
+
+        // DueTime string'i TimeSpan'e çevirme
+        if (!TimeSpan.TryParse(request.DueTime, out TimeSpan dueTime))
+        {
+            return BadRequest(new { message = "Geçersiz saat formatı. Lütfen HH:mm formatında giriniz." });
+        }
+
+        var newTask = new MyTask
+        {
+            Title = request.Title,
+            Description = request.Description,
+            Category = request.Category, 
+            Status = "todo", 
+            DueDate = DateTime.SpecifyKind(request.DueDate, DateTimeKind.Utc),
+            DueTime = dueTime,
+            CreatedAt = DateTime.UtcNow,
+            UserId = currentUserId 
+        };
+
+        _context.MyTasks.Add(newTask);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(TaskList), new { id = newTask.Id }, newTask);
     }
-
-    var newTask = new MyTask
+    catch (Exception ex)
     {
-        Title = request.Title,
-        Description = request.Description,
-        Category = request.Category, 
-        Status = "todo", 
-        DueDate = request.DueDate,
-        DueTime = dueTime, // Çevrilen TimeSpan değerini kullan
-        CreatedAt = DateTime.Now,
-        UserId = currentUserId 
-    };
-
-    _context.MyTasks.Add(newTask);
-    await _context.SaveChangesAsync();
-
-    return CreatedAtAction(nameof(TaskList), new { id = newTask.Id }, newTask);
+        return BadRequest(new { message = "Görev eklenirken hata oluştu: " + ex.Message });
+    }
 }
 
         
@@ -202,31 +211,28 @@ public async Task<IActionResult> GetStats()
                                   .Where(t => t.UserId == currentUserId)
                                   .ToListAsync();
 
+    var now = DateTime.UtcNow;
     var total = allTasks.Count;
+    
+    // Tamamlanan görevler (yeşil)
     var done = allTasks.Count(t => t.Status.ToLower() == "completed");
-    var pending = allTasks.Count(t => t.Status.ToLower() == "todo");
-    var inProgress = allTasks.Count(t => t.Status.ToLower() == "in-progress");
-
-    // Kategorilere göre dağılım
-    var byCategory = allTasks
-        .GroupBy(t => t.Category)
-        .Select(g => new
-        {
-            Category = g.Key,
-            Total = g.Count(),
-            Done = g.Count(t => t.Status.ToLower() == "completed"),
-            Pending = g.Count(t => t.Status.ToLower() == "todo"),
-            InProgress = g.Count(t => t.Status.ToLower() == "in-progress")
-        })
-        .ToList();
+    
+    // Süresi geçmiş ve tamamlanmamış görevler (kırmızı)
+    var overdue = allTasks.Count(t => 
+        t.Status.ToLower() != "completed" && 
+        t.DueDate < now);
+    
+    // Süresi geçmemiş ve tamamlanmamış görevler (sarı)
+    var pending = allTasks.Count(t => 
+        t.Status.ToLower() != "completed" && 
+        t.DueDate >= now);
 
     return Ok(new
     {
         Total = total,
         Done = done,
         Pending = pending,
-        InProgress = inProgress,
-        ByCategory = byCategory
+        Overdue = overdue
     });
 }
 }

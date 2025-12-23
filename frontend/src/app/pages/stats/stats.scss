@@ -29,31 +29,36 @@ h1 {
   border-radius: 50%;
   position: relative; 
 
-  @property --p-overdue {
-    syntax: '<number>';
-    initial-value: 0;
-    inherits: false;
+  @property --p-done {
+  syntax: '<number>';
+  initial-value: 0;
+  inherits: false;
   }
   @property --p-pending {
     syntax: '<number>';
     initial-value: 0;
     inherits: false;
   }
+  @property --p-overdue {
+    syntax: '<number>';
+    initial-value: 0;
+    inherits: false;
+  }
   
-  --c-done: #28a745;     
-  --c-pending: #ffc107;  
-  --c-overdue: #dc3545;  
+  --c-done: #27ae60;      // Yeşil - Tamamlandı
+  --c-pending: #f39c12;   // Sarı - Bekleyen
+  --c-overdue: #e74c3c;   // Kırmızı - Süresi geçmiş/Devam Eden
 
-  --perc-overdue: calc(var(--p-overdue) * 1%);
+  --perc-done: calc(var(--p-done) * 1%);
   --perc-pending: calc(var(--p-pending) * 1%);
-  
-  // Toplam yüzdeyi hesapla
-  --cumulative-pending: calc(var(--perc-overdue) + var(--perc-pending));
+  --perc-overdue: calc(var(--p-overdue) * 1%);
+
+  --cumulative-pending: calc(var(--perc-done) + var(--perc-pending));
 
   background-image: conic-gradient(
-    var(--c-overdue) 0 var(--perc-overdue),
-    var(--c-pending) var(--perc-overdue) var(--cumulative-pending),
-    var(--c-done) var(--cumulative-pending) 100%
+    var(--c-done) 0 var(--perc-done),
+    var(--c-pending) var(--perc-done) var(--cumulative-pending),
+    var(--c-overdue) var(--cumulative-pending) 100%
   );
 
   animation: pie-spin 1s ease-in-out;

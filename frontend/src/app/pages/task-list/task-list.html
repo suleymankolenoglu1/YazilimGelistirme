@@ -19,14 +19,13 @@
 <ul class="task-list-container">
   <li
     *ngFor="let task of filteredTasks"
-    [attr.data-status]="task.status"
-    [class.overdue]="isOverdue(task)"
-    [class.due-soon]="isDueSoon(task)"
+    [ngClass]="getTaskColorClass(task)"
   >
     <div class="task-info">
       <strong>{{ task.title }}</strong>
       <span>(Kategori: {{ task.category }})</span>
-      <p>{{ task.description }} ({{ task.dueTime }})</p>
+      <p>{{ task.description }}</p>
+      <small class="task-date">{{ task.dueDate | date:'dd.MM.yyyy' }} - {{ task.dueTime?.substring(0, 5) }}</small>
     </div>
 
     <!-- Sağ taraf: Eylemler -->
@@ -35,6 +34,7 @@
         type="checkbox"
         class="task-list-checkbox"
         [checked]="task.status === 'completed'"
+        [disabled]="isOverdue(task)"
         (change)="onToggleStatus(task)"
         title="Görevi tamamlandı olarak işaretle"
       />

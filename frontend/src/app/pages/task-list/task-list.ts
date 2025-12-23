@@ -121,4 +121,14 @@ export class TaskListComponent implements OnInit {
       },
     });
   }
+
+  getTaskColorClass(task: Task): string {
+    if (task.status === 'completed') {
+      return 'task-completed';  // Yeşil
+  }
+    if (this.isOverdue(task)) {
+      return 'task-overdue';    // Kırmızı
+  }
+      return 'task-pending';      // Sarı
+  }
 }

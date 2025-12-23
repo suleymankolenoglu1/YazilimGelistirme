@@ -48,12 +48,25 @@ export class TaskAdd implements OnInit {
         const foundTask = tasks.find((t) => t.id === id);
 
         if (foundTask) {
+          // Tarihi YYYY-MM-DD formatına çevir (input type="date" için)
+          let formattedDate = '';
+          if (foundTask.dueDate) {
+            const date = new Date(foundTask.dueDate);
+            formattedDate = date.toISOString().split('T')[0];
+          }
+          
+          // Saati HH:mm formatına çevir (saniyesiz)
+          let formattedTime = foundTask.dueTime || '';
+          if (formattedTime && formattedTime.length > 5) {
+            formattedTime = formattedTime.substring(0, 5);
+          }
+          
           this.task = {
             title: foundTask.title,
             description: foundTask.description || '',
             category: foundTask.category,
-            dueDate: foundTask.dueDate,
-            dueTime: foundTask.dueTime,
+            dueDate: formattedDate,
+            dueTime: formattedTime,
             status: foundTask.status,
           };
           console.log('Task yüklendi:', this.task);

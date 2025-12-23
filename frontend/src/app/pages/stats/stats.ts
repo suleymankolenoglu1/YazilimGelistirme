@@ -6,7 +6,7 @@ interface TaskStats {
   total: number;
   done: number;
   pending: number;
-  inProgress: number;
+  overdue: number;
 }
 
 @Component({
@@ -21,7 +21,7 @@ export class Stats implements OnInit {
     total: 0,
     done: 0,
     pending: 0,
-    inProgress: 0,
+    overdue: 0,
   };
 
   constructor(private taskService: TaskService) {}
