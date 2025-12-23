@@ -211,7 +211,7 @@ public async Task<IActionResult> GetStats()
                                   .Where(t => t.UserId == currentUserId)
                                   .ToListAsync();
 
-    var now = DateTime.UtcNow;
+    var now = DateTime.Now.Date; // Local tarih, sadece gün (saat hariç)
     var total = allTasks.Count;
     
     // Tamamlanan görevler (yeşil)
@@ -220,12 +220,12 @@ public async Task<IActionResult> GetStats()
     // Süresi geçmiş ve tamamlanmamış görevler (kırmızı)
     var overdue = allTasks.Count(t => 
         t.Status.ToLower() != "completed" && 
-        t.DueDate < now);
+        t.DueDate.Date < now);
     
     // Süresi geçmemiş ve tamamlanmamış görevler (sarı)
     var pending = allTasks.Count(t => 
         t.Status.ToLower() != "completed" && 
-        t.DueDate >= now);
+        t.DueDate.Date >= now);
 
     return Ok(new
     {

@@ -14,6 +14,14 @@ export interface Task {
   userId?: number;
   createdAt?: string;
   lastModified?: string;
+  attachmentPath?: string;
+}
+
+export interface Attachment {
+  id: number;
+  originalFileName: string;
+  fileSizeFormatted: string;
+  uploadDate: string;
 }
 
 @Injectable({
@@ -48,9 +56,46 @@ export class TaskService {
     return this.http.get<any>(`${this.apiUrl}/tasks/stats`);
   }
 
+  // Kategori bazlı istatistikleri getir
+  getCategoryStats(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/api/Attachment/stats`);
+  }
+
   // Kategorileri getir (task'lardan otomatik)
   getCategories(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/tasks/categories`);
+  }
+
+  // ===== ATTACHMENT (DOSYA) İŞLEMLERİ =====
+  private attachmentUrl = `${environment.apiUrl}/api/Attachment`;
+
+  // Dosya yükle
+  uploadFile(taskId: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.attachmentUrl}/tasks/${taskId}`, formData);
+  }
+
+  // Görevin dosyalarını listele
+  getAttachments(taskId: number): Observable<Attachment[]> {
+    return this.http.get<Attachment[]>(`${this.attachmentUrl}/tasks/${taskId}`);
+  }
+
+  // Dosya indir (URL döndür)
+  getDownloadUrl(attachmentId: number): string {
+    return `${this.attachmentUrl}/${attachmentId}`;
+  }
+
+  // Dosya indir (blob olarak - token ile)
+  downloadFile(attachmentId: number): Observable<Blob> {
+    return this.http.get(`${this.attachmentUrl}/${attachmentId}`, {
+      responseType: 'blob'
+    });
+  }
+
+  // Dosya sil
+  deleteAttachment(attachmentId: number): Observable<void> {
+    return this.http.delete<void>(`${this.attachmentUrl}/${attachmentId}`);
   }
 }
 

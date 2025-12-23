@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TaskService, Task } from '../../services/task';
+import { TaskService, Task, Attachment } from '../../services/task';
 
 @Component({
   selector: 'app-task-list',
@@ -16,6 +16,7 @@ export class TaskListComponent implements OnInit {
   public filteredTasks: Task[] = [];
   public selectedCategory: string = 'all';
   public categories: string[] = ['all'];
+  public taskAttachments: { [taskId: number]: Attachment[] } = {};
 
   constructor(private taskService: TaskService) {}
 
@@ -33,11 +34,28 @@ export class TaskListComponent implements OnInit {
 
         // Kategorileri çıkar
         this.updateCategories();
+        
+        // Her görevin attachment'larını yükle
+        this.loadAllAttachments();
       },
       error: (error) => {
         console.error('Task yükleme hatası:', error);
         alert('Görevler yüklenemedi!');
       },
+    });
+  }
+
+  // Tüm görevlerin dosyalarını yükle
+  loadAllAttachments(): void {
+    this.allTasks.forEach(task => {
+      this.taskService.getAttachments(task.id).subscribe({
+        next: (attachments) => {
+          this.taskAttachments[task.id] = attachments;
+        },
+        error: () => {
+          this.taskAttachments[task.id] = [];
+        },
+      });
     });
   }
 
@@ -130,5 +148,10 @@ export class TaskListComponent implements OnInit {
       return 'task-overdue';    // Kırmızı
   }
       return 'task-pending';      // Sarı
+  }
+
+  // Attachment sayısını güvenli şekilde al
+  getAttachmentCount(taskId: number): number {
+    return this.taskAttachments[taskId]?.length || 0;
   }
 }

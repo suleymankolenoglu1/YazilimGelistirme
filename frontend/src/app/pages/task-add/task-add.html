@@ -27,6 +27,31 @@
       <input type="time" id="dueTime" name="dueTime" [(ngModel)]="task.dueTime" />
     </div>
 
+    <!-- Mevcut dosyalar (Edit modda) -->
+    <div *ngIf="isEditMode && attachments.length > 0" class="attachments-list">
+      <label>📁 Mevcut Dosyalar:</label>
+      <div *ngFor="let att of attachments" class="attachment-item">
+        <button type="button" class="download-file-btn" (click)="onDownloadAttachment(att)">
+          📄 {{ att.originalFileName }}
+        </button>
+        <span class="file-size">({{ att.fileSizeFormatted }})</span>
+        <button type="button" class="delete-file-btn" (click)="onDeleteAttachment(att.id)">🗑️</button>
+      </div>
+    </div>
+
+    <!-- YENİ DOSYA EKLEME -->
+    <div class="form-group">
+      <label for="file">{{ isEditMode ? '📎 Yeni Dosya Ekle:' : '📎 Dosya Ekle:' }}</label>
+      <div class="file-input-wrapper">
+        <input type="file" id="file" name="file" (change)="onFileSelect($event)" 
+               accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx" />
+        <small class="file-hint">(PDF, PNG, JPG, DOCX, XLSX - Max 10MB)</small>
+      </div>
+      <div *ngIf="selectedFile" class="selected-file-info">
+        ✅ {{ selectedFile.name }} ({{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB)
+      </div>
+    </div>
+
     <button type="submit">{{ isEditMode ? 'Görevi Güncelle' : 'Görevi Kaydet' }}</button>
   </form>
 </div>

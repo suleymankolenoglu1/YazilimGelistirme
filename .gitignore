@@ -38,3 +38,9 @@ appsettings.Development.json
 *.db
 *.sqlite
 *.sqlite-journal
+
+###########################################
+# Uploaded Files
+###########################################
+backend/wwwroot/uploads/*
+!backend/wwwroot/uploads/.gitkeep

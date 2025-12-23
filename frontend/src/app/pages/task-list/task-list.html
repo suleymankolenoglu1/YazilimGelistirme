@@ -24,8 +24,15 @@
     <div class="task-info">
       <strong>{{ task.title }}</strong>
       <span>(Kategori: {{ task.category }})</span>
+      <!-- Dosya eki varsa göster -->
+      <a *ngIf="getAttachmentCount(task.id) > 0" 
+         [routerLink]="['/edit', task.id]" 
+         class="attachment-link" 
+         title="Dosyaları görüntüle">
+        📎
+      </a>
       <p>{{ task.description }}</p>
-      <small class="task-date">{{ task.dueDate | date:'dd.MM.yyyy' }} - {{ task.dueTime?.substring(0, 5) }}</small>
+      <small class="task-date">{{ task.dueDate | date:'dd.MM.yyyy' }} - {{ task.dueTime | slice:0:5 }}</small>
     </div>
 
     <!-- Sağ taraf: Eylemler -->

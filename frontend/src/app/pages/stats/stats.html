@@ -42,4 +42,32 @@
       <p>İstatistikleri görmek için <a routerLink="/add">yeni bir görev ekleyin</a>.</p>
     </div>
   </ng-template>
+
+  <!-- KATEGORİ BAZLI İSTATİSTİKLER -->
+  <div *ngIf="categoryStats.length > 0" class="category-stats-section">
+    <h2>📊 Kategorilere Göre Dağılım</h2>
+    
+    <div class="category-cards">
+      <div *ngFor="let cat of categoryStats" class="category-card">
+        <div class="category-header">
+          <span class="category-name">{{ cat.category }}</span>
+          <span class="category-total">{{ cat.total }} görev</span>
+        </div>
+        
+        <!-- Progress bar -->
+        <div class="progress-bar-container">
+          <div class="progress-bar" 
+               [style.width.%]="getCategoryCompletionPercent(cat)"
+               [class.full]="cat.completed === cat.total">
+          </div>
+        </div>
+        
+        <div class="category-details">
+          <span class="completed"><span class="icon">&#10004;</span> {{ cat.completed }}</span>
+          <span class="pending"><span class="icon">&#9203;</span> {{ cat.pending }}</span>
+          <span class="overdue"><span class="icon">&#10006;</span> {{ cat.overdue }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -37,7 +37,7 @@ namespace backend.Controllers
         }
         #endregion
 
-        // 1. Dosya Yükleme (POST: api/attachment/tasks/{id})
+        //Dosya Yükleme (POST: api/attachment/tasks/{id})
         [HttpPost("tasks/{id}")]
         public async Task<IActionResult> UploadFile(int id)
         {
@@ -120,7 +120,7 @@ namespace backend.Controllers
             return Ok(attachments);
         }
 
-        // 3. Dosya İndirme ve Önizleme (GET: api/attachment/{id})
+        //Dosya İndirme ve Önizleme (GET: api/attachment/{id})
         [HttpGet("{id}")]
         public async Task<IActionResult> DownloadAttachment(int id)
         {
@@ -150,7 +150,7 @@ namespace backend.Controllers
             return File(bytes, contentType, attachment.OriginalFileName);
         }
 
-        // 4. Dosya Silme (DELETE: api/attachment/{id})
+        //Dosya Silme (DELETE: api/attachment/{id})
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAttachment(int id)
         {
@@ -184,7 +184,7 @@ namespace backend.Controllers
             }
         }
 
-        // 5. Kategori Bazlı Görev İstatistikleri (GET: api/attachment/stats)
+        //Kategori Bazlı Görev İstatistikleri (GET: api/attachment/stats)
         [HttpGet("stats")]
         public async Task<IActionResult> GetTaskStats()
         {
@@ -199,16 +199,20 @@ namespace backend.Controllers
                 query = query.Where(t => t.UserId == currentUserId);
             }
 
-            var stats = await query
+            var tasks = await query.ToListAsync();
+            var now = DateTime.Now.Date;
+
+            var stats = tasks
                 .GroupBy(t => t.Category)
                 .Select(g => new
                 {
                     Category = g.Key,
                     Completed = g.Count(t => t.Status.ToLower() == "completed"),
-                    Incomplete = g.Count(t => t.Status.ToLower() != "completed"),
+                    Pending = g.Count(t => t.Status.ToLower() != "completed" && t.DueDate.Date >= now),
+                    Overdue = g.Count(t => t.Status.ToLower() != "completed" && t.DueDate.Date < now),
                     Total = g.Count()
                 })
-                .ToListAsync(); // Tüm kategorileri liste olarak döndürür
+                .ToList();
 
             return Ok(stats);
         }
